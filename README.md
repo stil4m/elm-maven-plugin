@@ -26,7 +26,7 @@ An example configuration for the plugin would be as shown below.
 <plugin>
     <groupId>nl.stil4m</groupId>
     <artifactId>elm-maven-plugin</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.5</version>
     <executions>
         <execution>
             <id>Make Elm Source</id>
