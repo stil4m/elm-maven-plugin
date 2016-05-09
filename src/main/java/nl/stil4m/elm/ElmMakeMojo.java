@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.util.Arrays;
 
 @Mojo(name = "make")
 public class ElmMakeMojo extends AbstractMojo {
@@ -47,15 +48,16 @@ public class ElmMakeMojo extends AbstractMojo {
             throw new RuntimeException(e);
         }
 
-        String command = executablePath +
-                " --yes " +
-                inputF.getAbsolutePath() +
-                " --output " +
-                outputF.getAbsolutePath();
-        getLog().info("Executing elm-make command: '" + command + "'");
+        String[] command = new String[]{
+                executablePath,
+                " --yes ",
+                inputF.getAbsolutePath(),
+                " --output ",
+                outputF.getAbsolutePath()
+        };
+        getLog().info("Executing elm-make command: '" + Arrays.toString(command) + "'");
 
         try {
-            Runtime rt = Runtime.getRuntime();
             Process process = new ProcessBuilder(command)
                     .directory(project.getBasedir())
                     .redirectErrorStream(true)
@@ -63,7 +65,7 @@ public class ElmMakeMojo extends AbstractMojo {
 
             BufferedReader inputStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
-            while((line = inputStream.readLine()) != null){
+            while ((line = inputStream.readLine()) != null) {
                 getLog().info("OUTPUT: " + line);
             }
 
