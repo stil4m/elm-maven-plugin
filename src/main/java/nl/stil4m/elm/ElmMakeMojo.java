@@ -54,7 +54,7 @@ public class ElmMakeMojo extends AbstractMojo {
 
         try {
             Runtime rt = Runtime.getRuntime();
-            Process pr = rt.exec(command);
+            Process pr = new ProcessBuilder(command).directory(project.getBasedir()).start();
 
             int exitValue = pr.waitFor();
             if (exitValue != 0) {

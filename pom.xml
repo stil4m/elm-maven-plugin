@@ -3,7 +3,7 @@
 
     <groupId>nl.stil4m</groupId>
     <artifactId>elm-maven-plugin</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>maven-plugin</packaging>
 
     <name>Elm Maven Plugin</name>
