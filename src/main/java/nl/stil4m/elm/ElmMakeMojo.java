@@ -60,7 +60,6 @@ public class ElmMakeMojo extends AbstractMojo {
             if (exitValue != 0) {
                 throw new IllegalArgumentException("Elm make did not finish with 0 status code. Instead: " + exitValue);
             }
-            System.out.println(exitValue);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
