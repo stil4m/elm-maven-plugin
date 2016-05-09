@@ -6,8 +6,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 
 @Mojo(name = "make")
@@ -54,9 +56,18 @@ public class ElmMakeMojo extends AbstractMojo {
 
         try {
             Runtime rt = Runtime.getRuntime();
-            Process pr = rt.exec(command, new String[]{}, project.getBasedir());
+            Process process = new ProcessBuilder(command)
+                    .directory(project.getBasedir())
+                    .redirectErrorStream(true)
+                    .start();
 
-            int exitValue = pr.waitFor();
+            BufferedReader inputStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while((line = inputStream.readLine()) != null){
+                getLog().info("OUTPUT: " + line);
+            }
+
+            int exitValue = process.waitFor();
             if (exitValue != 0) {
                 throw new IllegalArgumentException("Elm make did not finish with 0 status code. Instead: " + exitValue);
             }
