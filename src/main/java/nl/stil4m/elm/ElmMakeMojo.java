@@ -50,9 +50,9 @@ public class ElmMakeMojo extends AbstractMojo {
 
         String[] command = new String[]{
                 executablePath,
-                " --yes ",
+                "--yes",
                 inputF.getAbsolutePath(),
-                " --output ",
+                "--output",
                 outputF.getAbsolutePath()
         };
         getLog().info("Executing elm-make command: '" + Arrays.toString(command) + "'");
