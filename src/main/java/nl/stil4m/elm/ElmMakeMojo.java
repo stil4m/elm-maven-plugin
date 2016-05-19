@@ -11,7 +11,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Mojo(name = "make")
 public class ElmMakeMojo extends AbstractMojo {
@@ -22,43 +26,50 @@ public class ElmMakeMojo extends AbstractMojo {
     @Parameter(property = "make.elmMakeExecutable", defaultValue = "/usr/local/bin/elm-make")
     private String executablePath;
 
-    @Parameter(property = "make.inputFile")
-    private String inputFile;
+    @Parameter(property = "make.inputFiles")
+    private String[] inputFiles;
 
     @Parameter(property = "make.outputFile")
     private String outputFile;
 
     public void execute() throws MojoExecutionException {
-        File inputF = new File(inputFile);
-        if (!inputF.isAbsolute()) {
-            inputF = new File(project.getBasedir(), inputFile);
-        }
+        List<File> inputFs = Stream.of(inputFiles).map(f -> {
+            File file = new File(f);
+            if (!file.isAbsolute()) {
+                return new File(project.getBasedir(), f);
+            } else {
+                return file;
+            }
+        }).collect(Collectors.toList());
+
 
         File outputF = new File(outputFile);
         if (!outputF.isAbsolute()) {
             outputF = new File(project.getBasedir(), outputFile);
         }
 
-        if (!inputF.exists()) {
-            throw new IllegalArgumentException("Input file '" + inputF.getAbsolutePath() + "' does not exist");
-        }
+        inputFs.forEach(inputF -> {
+            if (!inputF.exists()) {
+                throw new IllegalArgumentException("Input file '" + inputF.getAbsolutePath() + "' does not exist");
+            }
+        });
         try {
             Files.createDirectories(outputF.getParentFile().toPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        String[] command = new String[]{
-                executablePath,
-                "--yes",
-                inputF.getAbsolutePath(),
-                "--output",
-                outputF.getAbsolutePath()
-        };
-        getLog().info("Executing elm-make command: '" + Arrays.toString(command) + "'");
+        List<String> commands = new ArrayList<>();
+        commands.add(executablePath);
+        commands.add("--yes");
+        commands.addAll(inputFs.stream().map(File::getAbsolutePath).collect(Collectors.toList()));
+        commands.add("--output");
+        commands.add(outputF.getAbsolutePath());
+
+        getLog().info("Executing elm-make command: '" + Arrays.toString(commands.toArray()) + "'");
 
         try {
-            Process process = new ProcessBuilder(command)
+            Process process = new ProcessBuilder(commands)
                     .directory(project.getBasedir())
                     .redirectErrorStream(true)
                     .start();
