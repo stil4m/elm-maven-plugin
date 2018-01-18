@@ -26,7 +26,7 @@ An example configuration for the plugin would be as shown below.
 <plugin>
     <groupId>nl.stil4m</groupId>
     <artifactId>elm-maven-plugin</artifactId>
-    <version>1.0.5</version>
+    <version>2.0.0</version>
     <executions>
         <execution>
             <id>Make Elm Source</id>
@@ -35,8 +35,9 @@ An example configuration for the plugin would be as shown below.
                 <goal>make</goal>
             </goals>
             <configuration>
-                <inputFile>src/App.elm</inputFile>
+                <inputFiles>src/App.elm</inputFiles>
                 <outputFile>generated/main.js</outputFile>
+                <executablePath>/path/to/elm-make</executablePath><!-- default value is /usr/local/bin/elm-make -->
             </configuration>
         </execution>
     </executions>
